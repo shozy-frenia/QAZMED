@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QazMedicine · Escitalopram Precision Dosing — Team Spliceosomes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" defer></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <a class="brand" href="#top"><span class="logo">QMD</span> QazMedicine · <span class="muted">Team&nbsp;Spliceosomes</span></a>
+    <div class="navlinks">
+      <a href="#problem">Problem</a>
+      <a href="#biology">Biology</a>
+      <a href="#model">Model</a>
+      <a href="#calculator">Simulator</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#kazakhstan">Kazakhstan</a>
+      <a href="#cdss">AI-CDSS</a>
+    </div>
+    <a class="nav-cta" href="#assistant">AI assistant</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header id="top" class="hero wrap">
+  <span class="hero-eyebrow"><span class="dot"></span> QazMedicine case · MDD × Escitalopram</span>
+  <h1>One drug. One dose. Very&nbsp;different&nbsp;outcomes.</h1>
+  <p class="sub">Why patients on identical escitalopram regimens respond so differently — and a
+  <span class="green">CYP2C19-driven, AI-supported</span> path from empirical prescribing to precision psychiatry, built for the population genomics of Kazakhstan.</p>
+  <div class="hero-cta">
+    <a class="btn btn-fill" href="#model">Explore the model</a>
+    <a class="btn btn-ghost" href="#assistant">Open AI assistant</a>
+  </div>
+  <div class="trust">A research architecture — not a validated clinical dosing calculator. Grounded in:</div>
+  <div class="logos">
+    <span>STAR*D</span><span>GUIDED</span><span>PRIME&nbsp;Care</span><span>CPIC&nbsp;2023</span>
+    <span>DPWG</span><span>PharmGKB</span><span>Iskakova&nbsp;2016</span>
+  </div>
+
+  <!-- signal pathway: gut -> liver(CYP2C19) -> brain(SERT), one green particle -->
+  <div class="pathway" aria-hidden="true">
+    <svg viewBox="0 0 1160 200" role="img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path id="drugpath" class="ppipe" d="M120,150 C220,150 220,60 330,60 L470,60 C560,60 560,150 660,150 L810,150 C900,150 900,60 1010,60"/>
+      <!-- nodes -->
+      <circle class="pnode" cx="120" cy="150" r="30"/><text class="plabel" x="120" y="200" text-anchor="middle">Gut · absorption ka</text>
+      <circle class="pnode" cx="565" cy="60" r="34"/><text class="plabel" x="565" y="20" text-anchor="middle">Liver · CYP2C19 clearance</text>
+      <circle class="pnode" cx="1010" cy="60" r="30"/><text class="plabel" x="1010" y="20" text-anchor="middle">Brain · SERT (SLC6A4)</text>
+      <!-- travelling green particle -->
+      <circle r="7" fill="#22c550">
+        <animateMotion dur="5.5s" repeatCount="indefinite" rotate="auto">
+          <mpath xlink:href="#drugpath" href="#drugpath"/>
+        </animateMotion>
+        <animate attributeName="opacity" values="0.2;1;1;0.2" dur="5.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+</header>
+
+<!-- PROBLEM -->
+<section id="problem" class="wrap">
+  <div class="eyebrow">01 · The clinical problem</div>
+  <h2 class="sec-title">The one-size-fits-all dose fails most patients</h2>
+  <p class="sec-lead">Major Depressive Disorder affects more than a billion people, yet first-line SSRI therapy is far from uniformly effective. Under an identical protocol some patients remit, some see no effect, and many meet clinically significant adverse effects.</p>
+
+  <div class="grid g4" style="margin-top:36px">
+    <div class="card">
+      <div class="kpi mono-num">27–37<small>%</small></div>
+      <div class="klabel">First-step remission on citalopram/escitalopram in STAR*D — the majority do not remit.</div>
+    </div>
+    <div class="card">
+      <div class="kpi mono-num">&gt;60<small>%</small></div>
+      <div class="klabel">Fail to remit after their first antidepressant trial, forcing empirical trial-and-error.</div>
+    </div>
+    <div class="card">
+      <div class="kpi mono-num">≤73.9<small>%</small></div>
+      <div class="klabel">Report at least one adverse drug reaction in real-world escitalopram cohorts (~40% in RCTs).</div>
+    </div>
+    <div class="card">
+      <div class="kpi mono-num">$1<small>T</small></div>
+      <div class="klabel">Estimated annual global productivity loss from depressive disorders (WHO, 2025).</div>
+    </div>
+  </div>
+
+  <div class="card soft" style="margin-top:16px">
+    <p class="mt0"><strong>The gap.</strong> A modest probability of remission set against a high incidence of adverse events —
+    nausea (15–21%), insomnia (8–13%), sexual dysfunction, hyperhidrosis, and, rarely, serotonin toxicity linked to
+    impaired clearance. This gap is exactly what a personalized, metabolism-aware approach targets.</p>
+  </div>
+</section>
+
+<!-- BIOLOGY -->
+<section id="biology" class="wrap">
+  <div class="eyebrow">02 · Biological mechanisms</div>
+  <h2 class="sec-title">Two systems drive the variability</h2>
+  <p class="sec-lead">Response is shaped by a chain of biological events, not by diagnosis alone: how the liver clears the drug (pharmacokinetics) and how the brain responds to it (pharmacodynamics).</p>
+
+  <div class="grid g2" style="margin-top:36px">
+    <div class="card">
+      <span class="pill">Pharmacokinetics</span>
+      <h3 style="margin-top:14px">CYP2C19 controls exposure</h3>
+      <p>Escitalopram is cleared mainly by hepatic CYP2C19 via N-demethylation. Loss-of-function alleles
+      <em>*2</em> and <em>*3</em> reduce enzyme activity; the promoter variant <em>*17</em> increases it. The result is four
+      metabolizer phenotypes with markedly different plasma exposure at the same dose.</p>
+    </div>
+    <div class="card">
+      <span class="pill">Pharmacodynamics</span>
+      <h3 style="margin-top:14px">SLC6A4 shapes target response</h3>
+      <p>Escitalopram blocks the serotonin transporter (SERT) encoded by <em>SLC6A4</em>. The 5-HTTLPR short/long
+      promoter variant alters SERT expression. Evidence is inconsistent across ancestries, so we keep SLC6A4
+      as an <em>exploratory</em> component weighted below CYP2C19 — never used alone.</p>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card soft">
+      <h3 style="font-size:18px">Epigenetics</h3>
+      <p>Chronic stress and cortisol can hypermethylate the SLC6A4 promoter, suppressing SERT even in long-allele carriers — a wild-type patient who still fails to respond.</p>
+    </div>
+    <div class="card soft">
+      <h3 style="font-size:18px">Neuroinflammation</h3>
+      <p>Pro-inflammatory cytokines (IL-6, TNF-α, CRP) interfere with serotonin signalling and lower antidepressant sensitivity, linked to more ADRs and treatment resistance.</p>
+    </div>
+    <div class="card soft">
+      <h3 style="font-size:18px">Phenoconversion</h3>
+      <p>Pharmacogenetic status is not fixed: co-medications, smoking, or liver disease can make a normal metabolizer behave like a poor or ultrarapid one — hence dynamic monitoring.</p>
+    </div>
+  </div>
+
+  <!-- phenotype table -->
+  <div style="margin-top:26px" class="tablewrap">
+    <table>
+      <thead><tr><th>Phenotype</th><th>CL factor</th><th>Clearance</th><th>Exposure</th><th>Clinical signal</th></tr></thead>
+      <tbody>
+        <tr><td class="tag-pm"><strong>PM</strong> · poor</td><td>0.4×</td><td class="mono-num">2.4 L/h</td><td>Highest</td><td>Toxicity risk → lower dose / alternative agent</td></tr>
+        <tr><td><strong>IM</strong> · intermediate</td><td>0.7×</td><td class="mono-num">4.2 L/h</td><td>Elevated</td><td>Individually tailored dose</td></tr>
+        <tr><td><strong>NM</strong> · normal</td><td>1.0×</td><td class="mono-num">6.0 L/h</td><td>Reference</td><td>Standard dosing</td></tr>
+        <tr><td class="tag-um"><strong>UM</strong> · ultrarapid</td><td>1.5×</td><td class="mono-num">9.0 L/h</td><td>Lowest</td><td>Subtherapeutic → possible failure</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap" style="border:none;padding-left:2px">CL factors after CPIC 2023 / DPWG 2021; clearance values from Jukić et al., 2018 and Jin et al., 2010.</p>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="media">
+      <img loading="lazy" src="assets/pharmacokinetics_3d_fast.gif" alt="3D surface: CYP2C19 phenotype × time × escitalopram concentration"/>
+      <div class="cap">Fig · CYP2C19 phenotype × time × plasma concentration surface. Exposure rises steeply toward PM.</div>
+    </div>
+    <div class="media">
+      <img loading="lazy" src="assets/sim3d.gif" alt="3D particle simulation of drug distribution for PM vs NM"/>
+      <div class="cap">Fig · Particle simulation — <span style="color:#e05a5a">PM (slow)</span> retains drug longer than <span class="green">NM (normal)</span> across gut → liver → brain compartments.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL -->
+<section id="model" class="wrap">
+  <div class="eyebrow">03 · The mathematical model</div>
+  <h2 class="sec-title">From ODEs to a remission probability</h2>
+  <p class="sec-lead">A two-compartment PK model feeds a Hill pharmacodynamic term and a logistic outcome model. Every parameter is drawn from published literature.</p>
+
+  <div class="grid g2" style="margin-top:34px">
+    <div>
+      <div class="formula">
+        <div class="fname">Pharmacokinetics · two-compartment with first-order absorption</div>
+        $$\frac{dA_g}{dt}=-k_a A_g$$
+        $$\frac{dA_c}{dt}=k_a A_g-\frac{CL}{V_c}A_c-k_{cp}A_c+k_{pc}A_p$$
+        $$\frac{dA_p}{dt}=k_{cp}A_c-k_{pc}A_p,\qquad C(t)=\frac{A_c(t)}{V_c}$$
+      </div>
+      <div class="formula">
+        <div class="fname">Pharmacodynamics · SERT inhibition (Hill)</div>
+        $$E(t)=\frac{E_{max}\,C(t)^{\gamma}}{EC_{50}^{\gamma}+C(t)^{\gamma}}$$
+      </div>
+    </div>
+    <div>
+      <div class="formula">
+        <div class="fname">Outcome · remission probability (logistic)</div>
+        $$P_{rem}=\frac{1}{1+e^{-(\beta_0+\beta_1 \mathrm{AUC}+\beta_2 \mathrm{PGx}+\beta_3 \mathrm{Age})}}$$
+        <p class="muted" style="font-size:13px;margin:.6em 0 0">with \(\mathrm{AUC}=\int_0^{56}C(t)\,dt\), expressed per 1000&nbsp;mg·h/L.</p>
+      </div>
+      <div class="formula">
+        <div class="fname">Personalized dose index</div>
+        $$D_{opt}=D_{std}\Big(w_1\frac{CL_{pred}}{CL_{pop}}+w_2 M_{bio}\Big)E_{epi}\prod_{i}(1-f_{pheno,i})$$
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:10px">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>PK / PD parameter</th><th>Value</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>k<sub>a</sub> · absorption</td><td class="mono-num">1.2 h⁻¹</td><td class="src">Jin et al., 2010</td></tr>
+          <tr><td>V<sub>c</sub> · central volume</td><td class="mono-num">45 L</td><td class="src">Jin et al., 2010</td></tr>
+          <tr><td>CL<sub>pop</sub> · clearance (NM)</td><td class="mono-num">6.0 L/h</td><td class="src">Jukić et al., 2018</td></tr>
+          <tr><td>k<sub>cp</sub>, k<sub>pc</sub></td><td class="mono-num">0.8, 0.6 h⁻¹</td><td class="src">Brouwer et al., 2022</td></tr>
+          <tr><td>E<sub>max</sub>, EC<sub>50</sub>, γ</td><td class="mono-num">0.8, 0.02, 1.0</td><td class="src">Meyer et al., 2004</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Logistic coefficient</th><th>Value</th><th>Calibrated from</th></tr></thead>
+        <tbody>
+          <tr><td>β₀ · baseline</td><td class="mono-num">−2.5</td><td class="src">GUIDED baseline</td></tr>
+          <tr><td>β₁ · AUC (per 1000 mg·h/L)</td><td class="mono-num">0.2</td><td class="src">PRIME Care</td></tr>
+          <tr><td>β₂ · PGx testing</td><td class="mono-num">0.6</td><td class="src">GUIDED + PRIME (OR≈1.82)</td></tr>
+          <tr><td>β₃ · age (per year)</td><td class="mono-num">−0.01</td><td class="src">STAR*D</td></tr>
+          <tr><td>w₁, w₂ · dose weights</td><td class="mono-num">0.8, 0.2</td><td class="src">w₁+w₂=1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="figfull" style="margin-top:22px">
+    <img loading="lazy" src="assets/fig_model.png" alt="Four-panel model figure: PK curves, Hill PD, dose index, remission"/>
+  </div>
+  <p class="cap" style="border:none;padding-left:2px">Generated directly from the equations and parameters above (RK4 integration of the PK ODEs).</p>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calculator" class="wrap">
+  <div class="eyebrow">04 · Interactive simulator</div>
+  <h2 class="sec-title">Run the model on a virtual patient</h2>
+  <p class="sec-lead">Adjust genotype, age and inflammation. The plasma curve is integrated live from the PK ODEs; dose and remission follow the formulas above.</p>
+
+  <div class="disclaimer" style="margin:22px 0">
+    <span class="mk">▲</span>
+    <div><strong>Investigational — not for clinical use.</strong> This prototype illustrates model behaviour only.
+    Outputs below 2.5 mg/day or above 20 mg/day are flagged and must never trigger an automatic drug switch.
+    All real dosing requires validated CPIC/DPWG guidance and clinician judgement.</div>
+  </div>
+
+  <div class="calc">
+    <div class="controls">
+      <div class="ctl">
+        <label>CYP2C19 phenotype</label>
+        <div class="seg" id="segPheno">
+          <button data-cl="2.4" data-k="PM">PM</button>
+          <button data-cl="4.2" data-k="IM">IM</button>
+          <button data-cl="6.0" data-k="NM" class="on">NM</button>
+          <button data-cl="9.0" data-k="UM">UM</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Age · <span class="rngval" id="ageV">40</span> years</label>
+        <input type="range" id="age" min="18" max="80" value="40"/>
+      </div>
+      <div class="ctl">
+        <label>Inflammation IL-6 · <span class="rngval" id="ilV">0.0</span> (phenoconversion)</label>
+        <input type="range" id="il6" min="0" max="2" step="0.1" value="0"/>
+      </div>
+      <div class="ctl">
+        <div class="toggle on" id="pgxTog" role="switch" aria-checked="true" tabindex="0">
+          <span class="switch"></span>
+          <span style="font-size:14px">Pharmacogenetic testing (PGx) applied</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="res-grid">
+        <div class="res-cell"><div class="n green mono-num" id="rDose">10.0</div><div class="l">D<sub>opt</sub> · mg/day</div></div>
+        <div class="res-cell"><div class="n mono-num" id="rAuc">93</div><div class="l">AUC · mg·h/L</div></div>
+        <div class="res-cell"><div class="n mono-num" id="rRem">—</div><div class="l">Remission probability</div></div>
+      </div>
+      <canvas id="pkchart" width="700" height="230"></canvas>
+      <div class="warnbox" id="warn">Reference normal metabolizer — standard 10 mg/day.</div>
+    </div>
+  </div>
+
+  <div class="media" style="margin-top:20px">
+    <img loading="lazy" src="assets/dose_animation.gif" alt="3D recommended-dose surface over IL-6 and CYP2C19 clearance"/>
+    <div class="cap">Fig · recommended-dose response surface over inflammation (IL-6) and CYP2C19 clearance, with an example patient at 8.0 mg/day.</div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section id="evidence" class="wrap">
+  <div class="eyebrow">05 · Current evidence</div>
+  <h2 class="sec-title">What the trials actually show</h2>
+  <p class="sec-lead">PGx-guided care shows modest but real absolute benefits. We report effects as they were measured — including non-significant primary outcomes — rather than the inflated relative figures often quoted.</p>
+
+  <div class="tablewrap" style="margin-top:30px">
+    <table>
+      <thead><tr><th>Study</th><th>Design</th><th>Verified result</th></tr></thead>
+      <tbody>
+        <tr><td>CPIC 2023</td><td>Guideline · CYP2C19 + others</td><td>Actionable CYP2C19 recommendations; <em>insufficient</em> evidence to prescribe on SLC6A4 / HTR2A alone.</td></tr>
+        <tr><td>GUIDED 2019</td><td>RCT · N=1167</td><td>Remission 15.3% vs 10.1% (p=0.007); response 26.0% vs 19.9% (p=0.013). Primary symptom outcome <em>not</em> significant (p=0.107). Absolute +5.2 pts.</td></tr>
+        <tr><td>PRIME Care 2022</td><td>Pragmatic RCT · N=1944</td><td>Remission over 24 wk OR 1.28 (1.05–1.57; p=0.02); fewer drug–gene-interaction prescriptions.</td></tr>
+        <tr><td>Hain 2025</td><td>Peer-reviewed post-hoc</td><td>Faster remission HR 1.27 (p=0.015); response HR 1.21 (p=0.010). Supportive, not definitive.</td></tr>
+        <tr><td>STAR*D reanalysis</td><td>Retrospective · N&gt;4000</td><td>Protocol-defined first-step remission ≈ 25.5%; no PGx.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap" style="border:none;padding-left:2px">Most trials ran in US / European-ancestry cohorts — supporting, but not substituting for, local prospective validation in Central Asia.</p>
+</section>
+
+<!-- KAZAKHSTAN -->
+<section id="kazakhstan" class="wrap">
+  <div class="eyebrow">06 · Population genomics of Kazakhstan</div>
+  <h2 class="sec-title">Why foreign algorithms need local calibration</h2>
+  <p class="sec-lead">The Kazakhstani population has a mixed Eurasian structure, combining East-Asian and European allele frequencies. Foreign prescribing algorithms cannot be transferred without population-specific evidence.</p>
+
+  <div class="grid g3" style="margin-top:34px">
+    <div class="card"><div class="kpi mono-num">~17<small>%</small></div><div class="klabel">CYP2C19<em>*2</em> A-allele frequency in Kazakh participants (Iskakova et al., 2016; N=320).</div></div>
+    <div class="card"><div class="kpi mono-num">26–31<small>%</small></div><div class="klabel">Reported <em>*2</em> frequency (Sikhayeva et al.) — close to East-Asian 30–34%, above European 12–15%.</div></div>
+    <div class="card"><div class="kpi mono-num green">+5.0<small>pts</small></div><div class="klabel">Absolute remission gain with PGx in our Monte Carlo (N=2000): 18.3% → 23.3%, matching GUIDED.</div></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Modelled genotype</th><th>Frequency</th><th>Derivation</th></tr></thead>
+        <tbody>
+          <tr><td>PM · <em>*2/*2</em></td><td class="mono-num">2.9%</td><td class="src">0.17²</td></tr>
+          <tr><td>IM · <em>*2/*1</em></td><td class="mono-num">28.2%</td><td class="src">2·0.17·0.83</td></tr>
+          <tr><td>NM · <em>*1/*1</em></td><td class="mono-num">68.9%</td><td class="src">0.83²</td></tr>
+          <tr><td>UM · <em>*17</em> carriers</td><td class="mono-num">8.5%</td><td class="src">2·0.83·0.05 + 0.05²</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card soft">
+      <h3 style="font-size:20px">A careful caveat</h3>
+      <p>The Kazakh source study established allele and genotype frequencies but <em>not</em> national poor/intermediate
+      metabolizer prevalence — that requires full diplotype interpretation (<em>*2, *3, *17</em>).
+      We therefore recommend routine PGx testing as part of a <strong>risk-stratified</strong> approach,
+      not a universal mandate, supported by representative local genotype and outcome data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AI-CDSS -->
+<section id="cdss" class="wrap">
+  <div class="eyebrow">07 · Proposed solution</div>
+  <h2 class="sec-title">A multi-gene passport and AI decision support</h2>
+  <p class="sec-lead">A pharmacogenetic passport feeds a cloud AI-CDSS that computes two research indices — hepatic clearance k<sub>PK</sub> and synaptic sensitivity k<sub>PD</sub> — and returns a traffic-light recommendation adapted to the Kazakhstani context.</p>
+
+  <!-- pipeline -->
+  <div class="grid g4" style="margin-top:34px">
+    <div class="card soft"><span class="pill">Input</span><h3 style="font-size:18px;margin-top:12px">Multi-gene panel</h3><p>CYP2C19 (*2,*3,*17), CYP2D6 CNV, CYP2B6, ABCB1 · SLC6A4, HTR2A, BDNF (investigational) · optional microbiome & methylation.</p></div>
+    <div class="card soft"><span class="pill">Compute</span><h3 style="font-size:18px;margin-top:12px">k<sub>PK</sub> · k<sub>PD</sub></h3><p>Ensemble / probabilistic models with late or hybrid integration when modalities are missing.</p></div>
+    <div class="card soft"><span class="pill">Output</span><h3 style="font-size:18px;margin-top:12px">D<sub>opt</sub> + report</h3><p>Personalized dose index and a green / yellow / red traffic-light report with CPIC/DPWG evidence level.</p></div>
+    <div class="card soft"><span class="pill g">Oversight</span><h3 style="font-size:18px;margin-top:12px">Clinician decides</h3><p>Human oversight is mandatory; thresholds never auto-switch a drug.</p></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card">
+      <h3 style="font-size:20px">Clinical pathway (Kazakhstan)</h3>
+      <p style="margin-top:10px">1 · Buccal swab at initial consultation.<br/>
+      2 · qPCR genotyping (7-marker panel) at primary care / regional centre.<br/>
+      3 · Data to AI via HL7/FHIR → traffic-light report within 24–48 h.<br/>
+      4 · Physician receives dose / drug-replacement recommendation with CPIC/DPWG evidence level.</p>
+      <p class="muted" style="font-size:13px">Integrates with MoH Clinical Protocol No. 29 by adding pharmacogenetic testing at the SSRI-selection step.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:20px">Economics &amp; feasibility</h3>
+      <p style="margin-top:10px">qPCR panel <strong>8,000–14,000 ₸</strong> (projected). Annual patient cost and savings are scenario projections pending MHIF tariff and hospital-data confirmation.</p>
+      <p>An Italian cost-utility model found CYP2C19 / CYP2D6 screening cost-effective at €75,000/QALY, with ICERs ≈ €60,000 and €47,000/QALY — justifying a <em>local</em> pharmacoeconomic study rather than direct transfer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ASSISTANT -->
+<section id="assistant" class="wrap">
+  <div class="eyebrow">08 · AI assistant</div>
+  <h2 class="sec-title">Ask about depression &amp; SSRI pharmacogenomics</h2>
+  <p class="sec-lead">An educational assistant for mental-health and pharmacogenomics questions. It explains concepts — it does not diagnose, prescribe, or recommend a dose. In any crisis, contact local emergency services or a trusted professional.</p>
+
+  <div class="chat" style="margin-top:28px">
+    <div class="chat-head"><span class="st"></span> <strong style="font-weight:500">Psychology &amp; PGx assistant</strong>
+      <span class="muted" style="font-size:12px;margin-left:auto">educational · not medical advice</span></div>
+    <div class="chat-log" id="log">
+      <div class="msg a">Hi — I can explain how depression, SSRIs like escitalopram, and CYP2C19 pharmacogenomics work at an educational level. What would you like to understand?</div>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip">What is Major Depressive Disorder?</span>
+      <span class="chip">How does escitalopram work?</span>
+      <span class="chip">What is a CYP2C19 poor metabolizer?</span>
+      <span class="chip">Why do people respond differently?</span>
+    </div>
+    <div class="chat-in">
+      <input id="q" type="text" placeholder="Ask a psychology or pharmacogenomics question…" autocomplete="off"/>
+      <button id="send">Send</button>
+    </div>
+  </div>
+  <p class="cap" style="border:none;padding-left:2px">Runs on Claude inside this page. If the AI endpoint isn't reachable (e.g. self-hosted without a backend), the assistant falls back to a built-in knowledge base for the suggested topics.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footgrid">
+      <div>
+        <h4>Team Spliceosomes</h4>
+        <p>Dzhubayaliyev Amir · Almagambetov Sanzhar · Kydyrbek Kozykorpesh</p>
+        <p class="muted">QazMedicine case — “Major Depressive Disorder and Escitalopram: A Multi-Omics and Pharmacogenetic Analysis.” August 2026.</p>
+      </div>
+      <div>
+        <h4>AI usage policy</h4>
+        <p class="muted">AI language models assisted with argument structure, literature retrieval and language. All scientific claims, data interpretation and clinical recommendations were reviewed and validated by the authors. No AI generated primary data or replaced clinical judgement.</p>
+      </div>
+      <div>
+        <h4>Status</h4>
+        <p class="muted">Research architecture — not a validated clinical dosing calculator. Every prototype output requires prospective validation in a Kazakhstani cohort before any clinical use.</p>
+      </div>
+    </div>
+    <h4>Selected references</h4>
+    <div class="refs">
+      Bousman CA, et al. CPIC Guideline for CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and SSRIs. Clin Pharmacol Ther. 2023.
+      · Brouwer S, et al. Genetic determinants of antidepressant response. Mol Psychiatry. 2022.
+      · Greden JF, et al. GUIDED trial. J Psychiatr Res. 2019.
+      · Oslin DW, et al. PRIME Care RCT. JAMA. 2022.
+      · Hain D, et al. Front Pharmacol. 2025;16:1658616.
+      · Iskakova AN, et al. ADME variants in Kazakhs. BMC Genet. 2016;17:23.
+      · Sikhayeva NS, et al. Population pharmacogenetics of Kazakhstan. 2016.
+      · Jukić MM, et al. CYP2C19 genotype and escitalopram exposure. Am J Psychiatry. 2018.
+      · Jin Y, et al. Age, weight, CYP2C19 and escitalopram exposure. J Clin Psychopharmacol. 2010.
+      · Meyer JH, et al. Serotonin transporter occupancy. 2004.
+      · Rush AJ, et al. STAR*D. Am J Psychiatry. 2006.
+      · Trivedi MH, et al. STAR*D citalopram outcomes. Am J Psychiatry. 2006.
+      · van der Weide J, et al. DPWG CYP2C19/CYP2D6–SSRI guideline. Eur J Hum Genet. 2021.
+      · Carta A, et al. Cost-utility of CYP2C19/CYP2D6 testing in MDD. Clin Drug Investig. 2022.
+      · Zhou Y, Lauschke VM. Population pharmacogenomics. Hum Genet. 2022.
+      · WHO. Global mental health report. 2025.
+    </div>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
